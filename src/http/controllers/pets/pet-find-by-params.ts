@@ -3,8 +3,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
 export async function petRegister(request : FastifyRequest, reply : FastifyReply) {
-
-    const registerBodySchema = z.object({
+    const findByParamsBodySchema = z.object({
         name        : z.string().min(2).max(100).nullable(), 
         animal      : z.string().max(50), 
         breed       : z.string().max(50).nullable(), 

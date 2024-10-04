@@ -1,4 +1,4 @@
-import { OrgsRepository } from "@/repositories/prisma/orgs/orgs-repository";
+import { OrgsRepository } from "@/repositories/prisma/orgs/prisma-orgs-repository";
 import { OrgUpdateUseCase } from "@/use-cases/orgs/org-update-use-case";
 
 export function makeOrgUpdateUseCase() {

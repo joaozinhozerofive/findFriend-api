@@ -1,13 +1,13 @@
-import { AppError } from "@/errors/error-default-app-error";
-import { prisma } from "@/lib/prisma";
 import { makeOrgUpdateUseCase } from "@/use-cases/factories/orgs/make-org-update-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { newRefreshToken } from "./utils/new-refresh-token";
 
 export async function orgUpdateController(request : FastifyRequest, reply : FastifyReply) {
-    const registerBodySchema = z.object({
+    const updateBodySchema = z.object({
         name         : z.string().min(2).max(100).optional(), 
         email        : z.string().max(200).email().optional(), 
+        old_password : z.string().min(6).optional(),     
         password     : z.string().min(6).optional(),     
         whatsapp     : z.string().min(5).max(20).optional(),     
         cep          : z.string().min(8).max(8).optional(), 
@@ -20,13 +20,29 @@ export async function orgUpdateController(request : FastifyRequest, reply : Fast
         longitude    : z.number().refine(val => Math.abs(val as number) < 90).optional(), 
     })
 
-    const body       = registerBodySchema.parse(request.body);
-    const orgUseCase = makeOrgUpdateUseCase();
-    const org        = await orgUseCase.execute({...body, org_id : '2a72e3a8-c1eb-4eab-8383-fbae593fa99d'});
+    const body              = updateBodySchema.parse(request.body);
+    const orgUpdateUseCase  = makeOrgUpdateUseCase();
+    const { org }           = await orgUpdateUseCase.execute({...body, org_id : request.user.sub});
+
+    if(!org) {
+        return reply
+        .status(200)
+        .send({
+            org
+        })
+    }
+
+    const refreshToken = await newRefreshToken({reply, is_donor: org.is_donor, sub: org.id})
 
     return reply
-        .status(204)
+        .setCookie('refreshToken', refreshToken, {
+            path : "/", 
+            secure : true, 
+            sameSite : true, 
+            httpOnly : true
+        })
+        .status(200)
         .send({
-        org
-    })
+            org
+        })
 }

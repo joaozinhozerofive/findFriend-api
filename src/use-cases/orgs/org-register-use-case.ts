@@ -8,13 +8,14 @@ interface OrgRegisterRequest {
     email        : string, 
     password     : string,  
     whatsapp     : string,  
-    cep          : string | null,  
-    street       : string | null,  
-    state        : string | null, 
-    neighborhood : string | null, 
+    cep          : string  | null,  
+    street       : string  | null,  
+    state        : string  | null, 
+    neighborhood : string  | null, 
     city         : string, 
-    latitude     : number | null, 
-    longitude    : number | null
+    latitude     : number  | null, 
+    longitude    : number  | null, 
+    is_donor     : boolean | null
 }
 
 interface OrgRegisterResponse{
@@ -35,7 +36,8 @@ export class OrgRegisterUseCase {
         neighborhood,
         city,
         latitude,
-        longitude
+        longitude,
+        is_donor
     } : OrgRegisterRequest) : Promise<OrgRegisterResponse> {
 
         const orgByEmail = await this.orgsRepository.findByEmail(email);
@@ -54,7 +56,8 @@ export class OrgRegisterUseCase {
             neighborhood,
             city,
             latitude,
-            longitude
+            longitude, 
+            is_donor
         })
     
         return {

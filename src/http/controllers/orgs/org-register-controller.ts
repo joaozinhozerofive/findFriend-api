@@ -13,11 +13,10 @@ export async function orgRegisterController(request : FastifyRequest, reply : Fa
         state        : z.string().min(2).max(100).nullable(),
         neighborhood : z.string().min(2).max(100).nullable(),
         city         : z.string().min(2).max(100),
-        is_donor     : z.boolean().default(false), 
-        latitude     : z.number().nullable().refine(val => Math.abs(val as number) < 90), 
-        longitude    : z.number().nullable().refine(val => Math.abs(val as number) < 90), 
+        is_donor     : z.boolean().nullable(), 
+        latitude     : z.number().nullable().refine(val => Math.abs(val as number) < 180), 
+        longitude    : z.number().nullable().refine(val => Math.abs(val as number) < 180), 
     })
-
     const body        =  registerBodySchema.parse(request.body);
     const orgRegister = makeOrgRegisterUseCase();
     const org         = await orgRegister.execute(body);
