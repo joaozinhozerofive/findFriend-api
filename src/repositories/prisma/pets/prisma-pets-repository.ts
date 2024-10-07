@@ -2,8 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { Pet, Prisma } from "@prisma/client";
 
 interface FindAllProps {
+    name? : string,
     particulars?: string[],
-    age?: string,
     breed?: string,
     city?: string
     about?: string
@@ -28,7 +28,6 @@ export class PetRepository{
                         mode     : "insensitive"
                     }, 
                 }, 
-                age : params.age, 
                 Particular : {
                     some : {
                         description :{
@@ -47,5 +46,9 @@ export class PetRepository{
                 } 
             }
         })
+    }
+
+    async findUnique(id : string) : Promise<Pet | null> {
+        return await prisma.pet.findUnique({ where : { id }});
     }
 }
